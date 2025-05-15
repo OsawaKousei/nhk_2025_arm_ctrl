@@ -1,6 +1,9 @@
 #include "arm_ctrl/arm_ctrl.hpp"
 
 #include <rclcpp_components/register_node_macro.hpp>
+#include <sensor_msgs/msg/joy.hpp>
+#include <std_msgs/msg/float32_multi_array.hpp>
+#include <std_srvs/srv/set_bool.hpp> // 仮のサービス型。int型サービスは独自定義が必要
 
 namespace arm_ctrl
 {
@@ -10,6 +13,22 @@ namespace arm_ctrl
   {
     // コンストラクタの実装
     RCLCPP_INFO(this->get_logger(), "ArmCtrl node has been created.");
+
+    // Joyサブスクライバー
+    joy_sub_ = this->create_subscription<sensor_msgs::msg::Joy>(
+        "joy", 10,
+        std::bind(&ArmCtrl::joy_callback, this, std::placeholders::_1));
+
+    // arm_cmdサービスクライアント（int型サービス。仮にstd_srvs::srv::SetBoolを使っています。独自サービスなら型を修正してください）
+    arm_cmd_client_ = this->create_client<std_srvs::srv::SetBool>("arm_cmd");
+
+    // arm_targetパブリッシャー
+    arm_target_pub_ = this->create_publisher<std_msgs::msg::Float32MultiArray>("arm_target", 10);
+  }
+
+  void ArmCtrl::joy_callback(const sensor_msgs::msg::Joy::SharedPtr msg)
+  {
+    // Joyメッセージの処理
   }
 
   ArmCtrl::~ArmCtrl()
