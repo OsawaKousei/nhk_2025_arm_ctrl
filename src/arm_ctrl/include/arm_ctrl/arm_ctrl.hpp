@@ -27,6 +27,10 @@ namespace arm_ctrl
     rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr joy_sub_;
     void joy_callback(const sensor_msgs::msg::Joy::SharedPtr msg);
 
+    // r_posサブスクライバー
+    rclcpp::Subscription<std_msgs::msg::Float32MultiArray>::SharedPtr r_pos_sub_;
+    void r_pos_callback(const std_msgs::msg::Float32MultiArray::SharedPtr msg);
+
     // arm_cmdサービスクライアント
     rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr arm_cmd_client_;
 

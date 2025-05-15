@@ -19,6 +19,11 @@ namespace arm_ctrl
         "joy", 10,
         std::bind(&ArmCtrl::joy_callback, this, std::placeholders::_1));
 
+    // r_posサブスクライバー
+    r_pos_sub_ = this->create_subscription<std_msgs::msg::Float32MultiArray>(
+        "r_pos", 10,
+        std::bind(&ArmCtrl::r_pos_callback, this, std::placeholders::_1));
+
     // arm_cmdサービスクライアント
     arm_cmd_client_ = this->create_client<std_srvs::srv::Trigger>("arm_cmd");
 
@@ -29,6 +34,11 @@ namespace arm_ctrl
   void ArmCtrl::joy_callback(const sensor_msgs::msg::Joy::SharedPtr msg)
   {
     // Joyメッセージの処理
+  }
+
+  void ArmCtrl::r_pos_callback(const std_msgs::msg::Float32MultiArray::SharedPtr msg)
+  {
+    // r_posメッセージの処理
   }
 
   ArmCtrl::~ArmCtrl()
