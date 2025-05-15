@@ -36,7 +36,7 @@ namespace arm_ctrl
   void ArmCtrl::joy_callback(const sensor_msgs::msg::Joy::SharedPtr msg)
   {
     // ボタン1と3が同時押しされているかチェック
-    if (msg->buttons.size() > 3 && msg->buttons[1] && msg->buttons[3])
+    if (msg->buttons.size() > 3 && msg->buttons[2] && msg->buttons[3])
     {
       // サービスリクエストが進行中でない場合
       if (!service_calling_ && arm_cmd_client_->service_is_ready())
