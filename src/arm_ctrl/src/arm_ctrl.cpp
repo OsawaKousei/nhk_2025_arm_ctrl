@@ -3,7 +3,7 @@
 #include <rclcpp_components/register_node_macro.hpp>
 #include <sensor_msgs/msg/joy.hpp>
 #include <std_msgs/msg/float32_multi_array.hpp>
-#include <std_srvs/srv/set_bool.hpp> // 仮のサービス型。int型サービスは独自定義が必要
+#include <std_srvs/srv/trigger.hpp>
 
 namespace arm_ctrl
 {
@@ -19,8 +19,8 @@ namespace arm_ctrl
         "joy", 10,
         std::bind(&ArmCtrl::joy_callback, this, std::placeholders::_1));
 
-    // arm_cmdサービスクライアント（int型サービス。仮にstd_srvs::srv::SetBoolを使っています。独自サービスなら型を修正してください）
-    arm_cmd_client_ = this->create_client<std_srvs::srv::SetBool>("arm_cmd");
+    // arm_cmdサービスクライアント
+    arm_cmd_client_ = this->create_client<std_srvs::srv::Trigger>("arm_cmd");
 
     // arm_targetパブリッシャー
     arm_target_pub_ = this->create_publisher<std_msgs::msg::Float32MultiArray>("arm_target", 10);
