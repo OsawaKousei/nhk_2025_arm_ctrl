@@ -10,7 +10,10 @@ find_package(ament_cmake_auto REQUIRED)
 ament_auto_find_build_dependencies()
 
 #ライブラリの生成
-ament_auto_add_library(arm_ctrl SHARED src/arm_ctrl.cpp)
+ament_auto_add_library(arm_ctrl SHARED
+  src/arm_ctrl.cpp
+  src/arm_ctrl_logic.cpp
+)
 rclcpp_components_register_nodes(arm_ctrl "arm_ctrl::arm_ctrl")
 
 install(DIRECTORY

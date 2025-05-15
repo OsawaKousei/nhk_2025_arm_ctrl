@@ -8,6 +8,7 @@
 #include <std_srvs/srv/trigger.hpp>
 
 #include "arm_ctrl/visibility_control.h"
+#include "arm_ctrl/arm_ctrl_logic.hpp"
 
 namespace arm_ctrl
 {
@@ -36,6 +37,13 @@ namespace arm_ctrl
 
     // arm_targetパブリッシャー
     rclcpp::Publisher<std_msgs::msg::Float32MultiArray>::SharedPtr arm_target_pub_;
+
+    // arm_ctrl_logic
+    ArmCtrlLogic arm_ctrl_logic_;
+
+    // サービスコール中フラグ
+    bool service_calling_ = false;
+    void arm_cmd_response_callback(rclcpp::Client<std_srvs::srv::Trigger>::SharedFuture future);
   };
 
 } // namespace arm_ctrl
