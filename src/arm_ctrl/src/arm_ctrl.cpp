@@ -4,6 +4,7 @@
 #include <sensor_msgs/msg/joy.hpp>
 #include <std_msgs/msg/float32_multi_array.hpp>
 #include <std_srvs/srv/trigger.hpp>
+#include <geometry_msgs/msg/point.hpp>
 
 namespace arm_ctrl
 {
@@ -20,16 +21,16 @@ namespace arm_ctrl
         std::bind(&ArmCtrl::joy_callback, this, std::placeholders::_1));
 
     // r_posサブスクライバー
-    r_pos_sub_ = this->create_subscription<std_msgs::msg::Float32MultiArray>(
+    r_pos_sub_ = this->create_subscription<geometry_msgs::msg::Point>(
         "r_pos", 10,
         std::bind(&ArmCtrl::r_pos_callback, this, std::placeholders::_1));
 
     // arm_cmdサービスクライアント
     arm_cmd_client_ = this->create_client<std_srvs::srv::Trigger>("arm_cmd");
+    service_calling_ = false;
 
     // arm_targetパブリッシャー
-    arm_target_pub_ = this->create_publisher<std_msgs::msg::Float32MultiArray>("arm_target", 10);
-    service_calling_ = false;
+    arm_target_pub_ = this->create_publisher<geometry_msgs::msg::Point>("arm_target", 10);
   }
 
   // 指定のボタンが押されたら、アームのシーケンス処理を開始する
@@ -65,16 +66,25 @@ namespace arm_ctrl
   }
 
   // r_posからarm_targetを計算してarm_targetトピックにパブリッシュする
-  void ArmCtrl::r_pos_callback(const std_msgs::msg::Float32MultiArray::SharedPtr msg)
+  void ArmCtrl::r_pos_callback(const geometry_msgs::msg::Point::SharedPtr msg)
   {
+    RCLCPP_INFO(this->get_logger(), "Received r_pos data from r_pos topic");
     // std_msgs::msg::Float32MultiArray → std::vector<float>
-    std::vector<float> r_pos_vec = msg->data;
+    std::vector<double> r_pos_vec = {
+        msg->x,
+        msg->y};
+
+    // float型に変換
+    std::vector<float> r_pos_vec_float(r_pos_vec.begin(), r_pos_vec.end());
     // 計算
-    std::vector<float> arm_target_vec = arm_ctrl_logic_.calc_arm_target(r_pos_vec);
-    // std::vector<float> → std_msgs::msg::Float32MultiArray
-    std_msgs::msg::Float32MultiArray arm_target_msg;
-    arm_target_msg.data = arm_target_vec;
+    std::vector<float> arm_target_vec = arm_ctrl_logic_.calc_arm_target(r_pos_vec_float);
+
+    geometry_msgs::msg::Point arm_target_msg;
+    arm_target_msg.x = arm_target_vec[0];
+    arm_target_msg.y = arm_target_vec[1];
+    arm_target_msg.z = 0.0;
     arm_target_pub_->publish(arm_target_msg);
+    RCLCPP_INFO(this->get_logger(), "Published arm_target data");
   }
 
   ArmCtrl::~ArmCtrl()

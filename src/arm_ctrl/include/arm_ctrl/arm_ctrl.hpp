@@ -6,6 +6,7 @@
 #include <sensor_msgs/msg/joy.hpp>
 #include <std_msgs/msg/float32_multi_array.hpp>
 #include <std_srvs/srv/trigger.hpp>
+#include <geometry_msgs/msg/point.hpp>
 
 #include "arm_ctrl/visibility_control.h"
 #include "arm_ctrl/arm_ctrl_logic.hpp"
@@ -29,14 +30,14 @@ namespace arm_ctrl
     void joy_callback(const sensor_msgs::msg::Joy::SharedPtr msg);
 
     // r_posサブスクライバー
-    rclcpp::Subscription<std_msgs::msg::Float32MultiArray>::SharedPtr r_pos_sub_;
-    void r_pos_callback(const std_msgs::msg::Float32MultiArray::SharedPtr msg);
+    rclcpp::Subscription<geometry_msgs::msg::Point>::SharedPtr r_pos_sub_;
+    void r_pos_callback(const geometry_msgs::msg::Point::SharedPtr msg);
 
     // arm_cmdサービスクライアント
     rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr arm_cmd_client_;
 
     // arm_targetパブリッシャー
-    rclcpp::Publisher<std_msgs::msg::Float32MultiArray>::SharedPtr arm_target_pub_;
+    rclcpp::Publisher<geometry_msgs::msg::Point>::SharedPtr arm_target_pub_;
 
     // arm_ctrl_logic
     ArmCtrlLogic arm_ctrl_logic_;
