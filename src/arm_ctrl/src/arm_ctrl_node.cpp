@@ -10,7 +10,8 @@ int main(int argc, char *argv[])
   rclcpp::init(argc, argv);
   rclcpp::executors::MultiThreadedExecutor exec;
 
-  auto arm_ctrl_node = std::make_shared<arm_ctrl::ArmCtrl>(rclcpp::NodeOptions());
+  auto options = rclcpp::NodeOptions().arguments({"--ros-args", "-r", "__ns:=/r2"});
+  auto arm_ctrl_node = std::make_shared<arm_ctrl::ArmCtrl>(options);
   exec.add_node(arm_ctrl_node);
 
   exec.spin();
