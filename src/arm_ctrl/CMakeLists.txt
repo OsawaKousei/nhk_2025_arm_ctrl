@@ -14,7 +14,7 @@ ament_auto_add_library(arm_ctrl SHARED
   src/arm_ctrl.cpp
   src/arm_ctrl_logic.cpp
 )
-rclcpp_components_register_nodes(arm_ctrl "arm_ctrl::arm_ctrl")
+rclcpp_components_register_nodes(arm_ctrl "arm_ctrl::ArmCtrl")
 
 install(DIRECTORY
   DESTINATION share/${PROJECT_NAME}/
