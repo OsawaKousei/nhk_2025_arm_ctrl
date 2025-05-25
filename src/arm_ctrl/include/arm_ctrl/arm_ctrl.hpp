@@ -42,8 +42,12 @@ namespace arm_ctrl
     // arm_ctrl_logic
     ArmCtrlLogic arm_ctrl_logic_;
 
+    // 初期値
+    geometry_msgs::msg::Point arm_target_msg;
+
     // サービスコール中フラグ
-    bool service_calling_ = false;
+    bool prev_button4_state_;
+    bool prev_button5_state_;
     void arm_cmd_response_callback(rclcpp::Client<std_srvs::srv::Trigger>::SharedFuture future);
   };
 
