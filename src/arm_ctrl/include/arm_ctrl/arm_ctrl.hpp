@@ -3,6 +3,7 @@
 
 #include <rclcpp/rclcpp.hpp>
 #include <std_msgs/msg/string.hpp>
+#include <std_msgs/msg/float32.hpp>
 #include <sensor_msgs/msg/joy.hpp>
 #include <std_msgs/msg/float32_multi_array.hpp>
 #include <std_srvs/srv/trigger.hpp>
@@ -32,7 +33,11 @@ namespace arm_ctrl
     // r_posサブスクライバー
     rclcpp::Subscription<geometry_msgs::msg::Point>::SharedPtr r_pos_sub_;
     void r_pos_callback(const geometry_msgs::msg::Point::SharedPtr msg);
-
+    
+    // target_valueサブスクライバー
+    rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr target_value_sub_;
+    void target_value_callback(const std_msgs::msg::Float32::SharedPtr msg);
+    
     // arm_cmdサービスクライアント
     rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr arm_cmd_client_;
 

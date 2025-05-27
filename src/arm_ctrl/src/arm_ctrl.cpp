@@ -3,6 +3,7 @@
 #include <rclcpp_components/register_node_macro.hpp>
 #include <sensor_msgs/msg/joy.hpp>
 #include <std_msgs/msg/float32_multi_array.hpp>
+#include <std_msgs/msg/float32.hpp>
 #include <std_srvs/srv/trigger.hpp>
 #include <geometry_msgs/msg/point.hpp>
 
@@ -24,6 +25,11 @@ namespace arm_ctrl
     r_pos_sub_ = this->create_subscription<geometry_msgs::msg::Point>(
         "r_pos", 10,
         std::bind(&ArmCtrl::r_pos_callback, this, std::placeholders::_1));
+
+    // target_valueサブスクライバー
+    target_value_sub_ = this->create_subscription<std_msgs::msg::Float32>(
+        "/target_value", 10,
+        std::bind(&ArmCtrl::target_value_callback, this, std::placeholders::_1));
 
     // arm_cmdサービスクライアント
     rmw_qos_profile_t qos_profile = rmw_qos_profile_services_default;
@@ -93,6 +99,12 @@ namespace arm_ctrl
     this->arm_target_msg.z = 0.0;
     arm_target_pub_->publish(this->arm_target_msg);
     RCLCPP_INFO(this->get_logger(), "Published arm_target data");
+  }
+
+  // target_valueトピックからのデータを受信して表示するコールバック
+  void ArmCtrl::target_value_callback(const std_msgs::msg::Float32::SharedPtr msg)
+  {
+    RCLCPP_INFO(this->get_logger(), "Received target_value: %f", msg->data);
   }
 
   ArmCtrl::~ArmCtrl()
