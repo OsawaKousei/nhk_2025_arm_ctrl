@@ -39,8 +39,8 @@ namespace arm_ctrl
     // arm_targetパブリッシャー
     arm_target_pub_ = this->create_publisher<geometry_msgs::msg::Point>("arm_target", 10);
 
-    this->arm_target_msg.x = -1.0;
-    this->arm_target_msg.y = 12.0;
+    this->arm_target_msg.x = this->arm_target_angle_init_value_;
+    this->arm_target_msg.y = this->arm_target_speed_value_;
     this->arm_target_msg.z = 0.0;
   }
 
@@ -53,7 +53,7 @@ namespace arm_ctrl
     if (current_button4_state && !prev_button4_state_)
     {
       RCLCPP_INFO(this->get_logger(), "Publishing reset message...");
-      this->arm_target_msg.z = 123.0;
+      this->arm_target_msg.z = this->arm_reset_cmd_value_; // リセットコマンドの値を設定
       arm_target_pub_->publish(this->arm_target_msg);
     }
 
@@ -105,6 +105,15 @@ namespace arm_ctrl
   void ArmCtrl::target_value_callback(const std_msgs::msg::Float32::SharedPtr msg)
   {
     RCLCPP_INFO(this->get_logger(), "Received target_value: %f", msg->data);
+    float diff = msg->data - this->robot_distance_init_value_;
+    float adjusted_value = diff * this->robot_distance_coefficient_;
+    this->arm_target_msg.x = this->arm_target_angle_init_value_;
+    this->arm_target_msg.y = this->arm_target_speed_value_ + adjusted_value;
+    this->arm_target_msg.z = 0.0;
+    RCLCPP_INFO(this->get_logger(), "Adjusted arm_target speed value: %f", this->arm_target_msg.y);
+    // arm_targetをパブリッシュ
+    arm_target_pub_->publish(this->arm_target_msg);
+    RCLCPP_INFO(this->get_logger(), "Published adjusted arm_target data");
   }
 
   ArmCtrl::~ArmCtrl()
