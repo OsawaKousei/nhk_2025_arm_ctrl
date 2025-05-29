@@ -3,6 +3,7 @@
 
 #include <rclcpp/rclcpp.hpp>
 #include <std_msgs/msg/string.hpp>
+#include <std_msgs/msg/float32.hpp>
 #include <sensor_msgs/msg/joy.hpp>
 #include <std_msgs/msg/float32_multi_array.hpp>
 #include <std_srvs/srv/trigger.hpp>
@@ -33,6 +34,10 @@ namespace arm_ctrl
     rclcpp::Subscription<geometry_msgs::msg::Point>::SharedPtr r_pos_sub_;
     void r_pos_callback(const geometry_msgs::msg::Point::SharedPtr msg);
 
+    // target_valueサブスクライバー
+    rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr target_value_sub_;
+    void target_value_callback(const std_msgs::msg::Float32::SharedPtr msg);
+
     // arm_cmdサービスクライアント
     rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr arm_cmd_client_;
 
@@ -42,9 +47,19 @@ namespace arm_ctrl
     // arm_ctrl_logic
     ArmCtrlLogic arm_ctrl_logic_;
 
+    // 初期値
+    geometry_msgs::msg::Point arm_target_msg;
+
     // サービスコール中フラグ
-    bool service_calling_ = false;
+    bool prev_button4_state_;
+    bool prev_button5_state_;
     void arm_cmd_response_callback(rclcpp::Client<std_srvs::srv::Trigger>::SharedFuture future);
+
+    const float arm_target_angle_init_value_ = -1.80f; // 初期値の設定
+    const float arm_target_speed_value_ = 13.0f;       // 最大値の設定
+    const float robot_distance_init_value_ = 3.50f;    // 初期値の設定
+    const float robot_distance_coefficient_ = 1.0f;    // ロボットの距離係数
+    const float arm_reset_cmd_value_ = 123.0f;         // リセットコマンドの値
   };
 
 } // namespace arm_ctrl
